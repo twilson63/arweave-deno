@@ -6,7 +6,7 @@ import * as ArweaveUtils from "./lib/utils.ts";
 import { JWKInterface } from "./lib/wallet.ts";
 import {
   TransactionUploader,
-  SerializedUploader
+  SerializedUploader,
 } from "./lib/transaction-uploader.ts";
 import Chunks from "./chunks.ts";
 
@@ -34,7 +34,7 @@ export default class Transactions {
   }
 
   public getTransactionAnchor(): Promise<string> {
-    return this.api.get(`tx_anchor`).then(response => {
+    return this.api.get(`tx_anchor`).then((response) => {
       return response.data;
     });
   }
@@ -54,12 +54,12 @@ export default class Transactions {
            * return it as a winston string.
            * @param data
            */
-          function(data: any): string {
+          function (data: any): string {
             return data;
-          }
-        ]
+          },
+        ],
       })
-      .then(response => {
+      .then((response) => {
         return response.data;
       });
   }
@@ -77,12 +77,12 @@ export default class Transactions {
         const data = await this.getData(id);
         return new Transaction({
           ...response.data,
-          data
+          data,
         });
       }
       return new Transaction({
         ...response.data,
-        format: response.data.format || 1
+        format: response.data.format || 1,
       });
     }
 
@@ -110,9 +110,9 @@ export default class Transactions {
       .post(`arql`, {
         op: "equals",
         expr1: tagName,
-        expr2: tagValue
+        expr2: tagValue,
       })
-      .then(response => {
+      .then((response) => {
         if (!response.data) {
           return [];
         }
@@ -121,23 +121,23 @@ export default class Transactions {
   }
 
   public getStatus(id: string): Promise<TransactionStatusResponse> {
-    return this.api.get(`tx/${id}/status`).then(response => {
+    return this.api.get(`tx/${id}/status`).then((response) => {
       if (response.status == 200) {
         return {
           status: 200,
-          confirmed: response.data
+          confirmed: response.data,
         };
       }
       return {
         status: response.status,
-        confirmed: null
+        confirmed: null,
       };
     });
   }
 
   public async getData(
     id: string,
-    options?: { decode?: boolean; string?: boolean }
+    options?: { decode?: boolean; string?: boolean },
   ): Promise<string | Uint8Array> {
     // Attempt to download from /txid, fall back to downloading chunks.
 
@@ -182,7 +182,7 @@ export default class Transactions {
 
   public async sign(
     transaction: Transaction,
-    jwk: JWKInterface
+    jwk: JWKInterface,
   ): Promise<void> {
     let dataToSign = await transaction.getSignatureData();
 
@@ -192,7 +192,7 @@ export default class Transactions {
 
     transaction.setSignature({
       signature: ArweaveUtils.bufferTob64Url(rawSignature),
-      id: ArweaveUtils.bufferTob64Url(id)
+      id: ArweaveUtils.bufferTob64Url(id),
     });
   }
 
@@ -205,16 +205,16 @@ export default class Transactions {
      */
     const rawSignature = transaction.get("signature", {
       decode: true,
-      string: false
+      string: false,
     });
 
     const expectedId = ArweaveUtils.bufferTob64Url(
-      await this.crypto.hash(rawSignature)
+      await this.crypto.hash(rawSignature),
     );
 
     if (transaction.id !== expectedId) {
       throw new Error(
-        `Invalid transaction signature or ID! The transaction ID doesn't match the expected SHA-256 hash of the signature.`
+        `Invalid transaction signature or ID! The transaction ID doesn't match the expected SHA-256 hash of the signature.`,
       );
     }
 
@@ -224,12 +224,12 @@ export default class Transactions {
     return this.crypto.verify(
       transaction.owner,
       signaturePayload,
-      rawSignature
+      rawSignature,
     );
   }
 
   public async post(
-    transaction: Transaction | Uint8Array | string | object
+    transaction: Transaction | Uint8Array | string | object,
   ): Promise<{ status: number; statusText: string; data: any }> {
     if (typeof transaction === "string") {
       transaction = new Transaction(JSON.parse(transaction as string));
@@ -263,8 +263,8 @@ export default class Transactions {
           status: uploader.lastResponseStatus,
           statusText: uploader.lastResponseError,
           data: {
-            error: uploader.lastResponseError
-          }
+            error: uploader.lastResponseError,
+          },
         };
       }
       throw e;
@@ -273,7 +273,7 @@ export default class Transactions {
     return {
       status: 200,
       statusText: "OK",
-      data: {}
+      data: {},
     };
   }
 
@@ -296,7 +296,7 @@ export default class Transactions {
    */
   public async getUploader(
     upload: Transaction | SerializedUploader | string,
-    data?: Uint8Array | ArrayBuffer
+    data?: Uint8Array | ArrayBuffer,
   ) {
     let uploader!: TransactionUploader;
 
@@ -319,7 +319,7 @@ export default class Transactions {
       uploader = await TransactionUploader.fromSerialized(
         this.api,
         upload,
-        data
+        data,
       );
     }
 
@@ -342,7 +342,7 @@ export default class Transactions {
    */
   public async *upload(
     upload: Transaction | SerializedUploader | string,
-    data?: Uint8Array
+    data?: Uint8Array,
   ) {
     const uploader = await this.getUploader(upload, data);
 

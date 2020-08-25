@@ -8,7 +8,7 @@ export default interface CryptoInterface {
   verify(
     publicModulus: string,
     data: Uint8Array,
-    signature: Uint8Array
+    signature: Uint8Array,
   ): Promise<boolean>;
 
   encrypt(data: Uint8Array, key: string | Uint8Array): Promise<Uint8Array>;

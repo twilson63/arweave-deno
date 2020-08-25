@@ -72,13 +72,13 @@ export default class Arweave {
   public getConfig(): Config {
     return {
       api: this.api.getConfig(),
-      crypto: null!
+      crypto: null!,
     };
   }
 
   public async createTransaction(
     attributes: Partial<CreateTransactionInterface>,
-    jwk: JWKInterface
+    jwk: JWKInterface,
   ): Promise<Transaction> {
     const from = await this.wallets.jwkToAddress(jwk);
 
@@ -88,7 +88,7 @@ export default class Arweave {
 
     if (!attributes.data && !(attributes.target && attributes.quantity)) {
       throw new Error(
-        `A new Arweave transaction must have a 'data' value, or 'target' and 'quantity' values.`
+        `A new Arweave transaction must have a 'data' value, or 'target' and 'quantity' values.`,
       );
     }
 
@@ -110,7 +110,7 @@ export default class Arweave {
 
     if (attributes.data && !(attributes.data instanceof Uint8Array)) {
       throw new Error(
-        "Expected data to be a string, Uint8Array or ArrayBuffer"
+        "Expected data to be a string, Uint8Array or ArrayBuffer",
       );
     }
 
@@ -118,7 +118,7 @@ export default class Arweave {
       const length = attributes.data ? attributes.data.byteLength : 0;
       transaction.reward = await this.transactions.getPrice(
         length,
-        transaction.target
+        transaction.target,
       );
     }
 
@@ -134,7 +134,7 @@ export default class Arweave {
   public async createSiloTransaction(
     attributes: Partial<CreateTransactionInterface>,
     jwk: JWKInterface,
-    siloUri: string
+    siloUri: string,
   ): Promise<Transaction> {
     const from = await this.wallets.jwkToAddress(jwk);
 
@@ -152,7 +152,7 @@ export default class Arweave {
 
     if (attributes.target || attributes.quantity) {
       throw new Error(
-        `Silo transactions can only be used for storing data, sending AR to other wallets isn't supported.`
+        `Silo transactions can only be used for storing data, sending AR to other wallets isn't supported.`,
       );
     }
 
@@ -169,10 +169,10 @@ export default class Arweave {
     if (typeof attributes.data == "string") {
       const encrypted = await this.crypto.encrypt(
         ArweaveUtils.stringToBuffer(attributes.data),
-        siloResource.getEncryptionKey()
+        siloResource.getEncryptionKey(),
       );
       transaction.reward = await this.transactions.getPrice(
-        encrypted.byteLength
+        encrypted.byteLength,
       );
       transaction.data = ArweaveUtils.bufferTob64Url(encrypted);
     }
@@ -180,16 +180,16 @@ export default class Arweave {
     if (attributes.data instanceof Uint8Array) {
       const encrypted = await this.crypto.encrypt(
         attributes.data,
-        siloResource.getEncryptionKey()
+        siloResource.getEncryptionKey(),
       );
       transaction.reward = await this.transactions.getPrice(
-        encrypted.byteLength
+        encrypted.byteLength,
       );
       transaction.data = ArweaveUtils.bufferTob64Url(encrypted);
     }
 
     const siloTransaction = new Transaction(
-      transaction as TransactionInterface
+      transaction as TransactionInterface,
     );
 
     siloTransaction.addTag("Silo-Name", siloResource.getAccessKey());
@@ -199,6 +199,8 @@ export default class Arweave {
   }
 
   public arql(query: object): Promise<string[]> {
-    return this.api.post("/arql", query).then(response => response.data || []);
+    return this.api.post("/arql", query).then((response) =>
+      response.data || []
+    );
   }
 }

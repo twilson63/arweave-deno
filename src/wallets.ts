@@ -31,12 +31,12 @@ export default class Wallets {
            * return it as a winston string.
            * @param data
            */
-          function(data: any): string {
+          function (data: any): string {
             return data;
-          }
-        ]
+          },
+        ],
       })
-      .then(response => {
+      .then((response) => {
         return response.data;
       });
   }
@@ -49,7 +49,7 @@ export default class Wallets {
    * @returns {Promise<string>} - Promise which resolves with a winston string balance.
    */
   public getLastTransactionID(address: string): Promise<string> {
-    return this.api.get(`wallet/${address}/last_tx`).then(response => {
+    return this.api.get(`wallet/${address}/last_tx`).then((response) => {
       return response.data;
     });
   }
@@ -64,7 +64,7 @@ export default class Wallets {
 
   public async ownerToAddress(owner: string): Promise<string> {
     return ArweaveUtils.bufferTob64Url(
-      await this.crypto.hash(ArweaveUtils.b64UrlToBuffer(owner))
+      await this.crypto.hash(ArweaveUtils.b64UrlToBuffer(owner)),
     );
   }
 }

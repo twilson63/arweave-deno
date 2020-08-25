@@ -25,7 +25,7 @@ export default class Chunks {
   }
 
   async getChunk(
-    offset: string | number | BigInt
+    offset: string | number | BigInt,
   ): Promise<TransactionChunkResponse> {
     const resp = await this.api.get(`chunk/${offset}`);
     if (resp.status === 200) {

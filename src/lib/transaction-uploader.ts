@@ -22,7 +22,7 @@ const FATAL_CHUNK_UPLOAD_ERRORS = [
   "offset_too_big",
   "data_size_too_big",
   "chunk_proof_ratio_not_attractive",
-  "invalid_proof"
+  "invalid_proof",
 ];
 
 // Amount we will delay on receiving an error response but do want to continue.
@@ -77,7 +77,7 @@ export class TransactionUploader {
     // Make a copy of transaction, zeroing the data so we can serialize.
     this.data = transaction.data;
     this.transaction = new Transaction(
-      Object.assign({}, transaction, { data: new Uint8Array(0) })
+      Object.assign({}, transaction, { data: new Uint8Array(0) }),
     );
   }
 
@@ -102,24 +102,19 @@ export class TransactionUploader {
     // error every time, so eventually bail.
     if (this.totalErrors === 100) {
       throw new Error(
-        `Unable to complete upload: ${this.lastResponseStatus}: ${
-          this.lastResponseError
-        }`
+        `Unable to complete upload: ${this.lastResponseStatus}: ${this.lastResponseError}`,
       );
     }
 
-    let delay =
-      this.lastResponseError === ""
-        ? 0
-        : Math.max(
-            this.lastRequestTimeEnd + ERROR_DELAY - Date.now(),
-            ERROR_DELAY
-          );
+    let delay = this.lastResponseError === "" ? 0 : Math.max(
+      this.lastRequestTimeEnd + ERROR_DELAY - Date.now(),
+      ERROR_DELAY,
+    );
 
     if (delay > 0) {
       // Jitter delay bcoz networks, subtract up to 30% from 40 seconds
       delay = delay - delay * Math.random() * 0.3;
-      await new Promise(res => setTimeout(res, delay));
+      await new Promise((res) => setTimeout(res, delay));
     }
 
     this.lastResponseError = "";
@@ -136,7 +131,7 @@ export class TransactionUploader {
       parseInt(chunk.offset),
       0,
       parseInt(chunk.data_size),
-      ArweaveUtils.b64UrlToBuffer(chunk.data_path)
+      ArweaveUtils.b64UrlToBuffer(chunk.data_path),
     );
     if (!chunkOk) {
       throw new Error(`Unable to validate chunk ${this.chunkIndex}`);
@@ -145,7 +140,7 @@ export class TransactionUploader {
     // Catch network errors and turn them into objects with status -1 and an error message.
     const resp = await this.api
       .post(`chunk`, this.transaction.getChunk(this.chunkIndex, this.data))
-      .catch(e => {
+      .catch((e) => {
         console.error(e.message);
         return { status: -1, data: { error: e.message } };
       });
@@ -159,9 +154,7 @@ export class TransactionUploader {
       this.lastResponseError = getError(resp);
       if (FATAL_CHUNK_UPLOAD_ERRORS.includes(this.lastResponseError)) {
         throw new Error(
-          `Fatal error uploading chunk ${this.chunkIndex}: ${
-            this.lastResponseError
-          }`
+          `Fatal error uploading chunk ${this.chunkIndex}: ${this.lastResponseError}`,
         );
       }
     }
@@ -177,7 +170,7 @@ export class TransactionUploader {
   public static async fromSerialized(
     api: Api,
     serialized: SerializedUploader,
-    data: Uint8Array
+    data: Uint8Array,
   ): Promise<TransactionUploader> {
     if (
       !serialized ||
@@ -192,7 +185,7 @@ export class TransactionUploader {
 
     const upload = new TransactionUploader(
       api,
-      new Transaction(serialized.transaction)
+      new Transaction(serialized.transaction),
     );
 
     // Copy the serialized upload information, and data passed in.
@@ -221,7 +214,7 @@ export class TransactionUploader {
    */
   public static async fromTransactionId(
     api: Api,
-    id: string
+    id: string,
   ): Promise<SerializedUploader> {
     const resp = await api.get(`tx/${id}`);
 
@@ -238,7 +231,7 @@ export class TransactionUploader {
       lastResponseError: "",
       lastRequestTimeEnd: 0,
       lastResponseStatus: 0,
-      transaction
+      transaction,
     };
 
     return serialized;
@@ -251,7 +244,7 @@ export class TransactionUploader {
       lastRequestTimeEnd: this.lastRequestTimeEnd,
       lastResponseStatus: this.lastResponseStatus,
       lastResponseError: this.lastResponseError,
-      txPosted: this.txPosted
+      txPosted: this.txPosted,
     };
   }
 
@@ -262,7 +255,7 @@ export class TransactionUploader {
     if (uploadInBody) {
       // Post the transaction with data.
       this.transaction.data = this.data;
-      const resp = await this.api.post(`tx`, this.transaction).catch(e => {
+      const resp = await this.api.post(`tx`, this.transaction).catch((e) => {
         console.error(e);
         return { status: -1, data: { error: e.message } };
       });
@@ -279,9 +272,7 @@ export class TransactionUploader {
       }
       this.lastResponseError = getError(resp);
       throw new Error(
-        `Unable to upload transaction: ${resp.status}, ${
-          this.lastResponseError
-        }`
+        `Unable to upload transaction: ${resp.status}, ${this.lastResponseError}`,
       );
     }
 
@@ -292,9 +283,7 @@ export class TransactionUploader {
     if (!(resp.status >= 200 && resp.status < 300)) {
       this.lastResponseError = getError(resp);
       throw new Error(
-        `Unable to upload transaction: ${resp.status}, ${
-          this.lastResponseError
-        }`
+        `Unable to upload transaction: ${resp.status}, ${this.lastResponseError}`,
       );
     }
     this.txPosted = true;

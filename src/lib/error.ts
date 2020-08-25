@@ -4,7 +4,7 @@ export const enum ArweaveErrorType {
   TX_PENDING = "TX_PENDING",
   TX_NOT_FOUND = "TX_NOT_FOUND",
   TX_FAILED = "TX_FAILED",
-  TX_INVALID = "TX_INVALID"
+  TX_INVALID = "TX_INVALID",
 }
 
 export default class ArweaveError extends Error {
@@ -13,7 +13,7 @@ export default class ArweaveError extends Error {
 
   constructor(
     type: ArweaveErrorType,
-    optional: { message?: string; response?: AxiosResponse } = {}
+    optional: { message?: string; response?: AxiosResponse } = {},
   ) {
     if (optional.message) {
       super(optional.message);

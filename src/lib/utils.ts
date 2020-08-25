@@ -3,7 +3,7 @@ import * as B64js from "https://denopkg.com/chiefbiiko/base64/mod.ts";
 export type Base64UrlString = string;
 
 export function concatBuffers(
-  buffers: Uint8Array[] | ArrayBuffer[]
+  buffers: Uint8Array[] | ArrayBuffer[],
 ): Uint8Array {
   let total_length = 0;
 

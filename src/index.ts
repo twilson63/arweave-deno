@@ -4,7 +4,7 @@ import WebCryptoDriver from "./lib/crypto/webcrypto-driver.ts";
 
 Arweave.crypto = new WebCryptoDriver();
 
-Arweave.init = function(apiConfig: ApiConfig = {}): Arweave {
+Arweave.init = function (apiConfig: ApiConfig = {}): Arweave {
   return new Arweave(apiConfig);
 };
 

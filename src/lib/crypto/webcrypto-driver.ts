@@ -24,11 +24,11 @@ export default class WebCryptoDriver implements CryptoInterface {
         modulusLength: 4096,
         publicExponent: new Uint8Array([0x01, 0x00, 0x01]),
         hash: {
-          name: "SHA-256"
-        }
+          name: "SHA-256",
+        },
       },
       true,
-      ["sign"]
+      ["sign"],
     );
 
     let jwk = await this.driver.exportKey("jwk", cryptoKey.privateKey);
@@ -42,7 +42,7 @@ export default class WebCryptoDriver implements CryptoInterface {
       q: jwk.q,
       dp: jwk.dp,
       dq: jwk.dq,
-      qi: jwk.qi
+      qi: jwk.qi,
     };
   }
 
@@ -50,10 +50,10 @@ export default class WebCryptoDriver implements CryptoInterface {
     let signature = await this.driver.sign(
       {
         name: "RSA-PSS",
-        saltLength: 0
+        saltLength: 0,
       },
       await this.jwkToCryptoKey(jwk),
-      data
+      data,
     );
 
     return new Uint8Array(signature);
@@ -61,7 +61,7 @@ export default class WebCryptoDriver implements CryptoInterface {
 
   public async hash(
     data: Uint8Array,
-    algorithm: string = "SHA-256"
+    algorithm: string = "SHA-256",
   ): Promise<Uint8Array> {
     let digest = await this.driver.digest(algorithm, data);
 
@@ -71,12 +71,12 @@ export default class WebCryptoDriver implements CryptoInterface {
   public async verify(
     publicModulus: string,
     data: Uint8Array,
-    signature: Uint8Array
+    signature: Uint8Array,
   ): Promise<boolean> {
     const publicKey = {
       kty: "RSA",
       e: "AQAB",
-      n: publicModulus
+      n: publicModulus,
     };
 
     const key = await this.jwkToPublicCryptoKey(publicKey);
@@ -84,11 +84,11 @@ export default class WebCryptoDriver implements CryptoInterface {
     return this.driver.verify(
       {
         name: "RSA-PSS",
-        saltLength: 0
+        saltLength: 0,
       },
       key,
       signature,
-      data
+      data,
     );
   }
 
@@ -99,16 +99,16 @@ export default class WebCryptoDriver implements CryptoInterface {
       {
         name: "RSA-PSS",
         hash: {
-          name: "SHA-256"
-        }
+          name: "SHA-256",
+        },
       },
       false,
-      ["sign"]
+      ["sign"],
     );
   }
 
   private async jwkToPublicCryptoKey(
-    publicJwk: JWKPublicInterface
+    publicJwk: JWKPublicInterface,
   ) {
     return this.driver.importKey(
       "jwk",
@@ -116,11 +116,11 @@ export default class WebCryptoDriver implements CryptoInterface {
       {
         name: "RSA-PSS",
         hash: {
-          name: "SHA-256"
-        }
+          name: "SHA-256",
+        },
       },
       false,
-      ["verify"]
+      ["verify"],
     );
   }
 
@@ -133,17 +133,17 @@ export default class WebCryptoDriver implements CryptoInterface {
 
   public async encrypt(
     data: Uint8Array,
-    key: string | Uint8Array
+    key: string | Uint8Array,
   ): Promise<Uint8Array> {
     const initialKey = await this.driver.importKey(
       "raw",
       typeof key == "string" ? ArweaveUtils.stringToBuffer(key) : key,
       {
         name: "PBKDF2",
-        length: 32
+        length: 32,
       },
       false,
-      ["deriveKey"]
+      ["deriveKey"],
     );
 
     const salt = ArweaveUtils.stringToBuffer("salt");
@@ -153,15 +153,15 @@ export default class WebCryptoDriver implements CryptoInterface {
         name: "PBKDF2",
         salt: salt,
         iterations: 100000,
-        hash: "SHA-256"
+        hash: "SHA-256",
       },
       initialKey,
       {
         name: "AES-CBC",
-        length: 256
+        length: 256,
       },
       false,
-      ["encrypt", "decrypt"]
+      ["encrypt", "decrypt"],
     );
 
     const iv = new Uint8Array(16);
@@ -171,10 +171,10 @@ export default class WebCryptoDriver implements CryptoInterface {
     const encryptedData = await this.driver.encrypt(
       {
         name: "AES-CBC",
-        iv: iv
+        iv: iv,
       },
       derivedkey,
-      data
+      data,
     );
 
     return ArweaveUtils.concatBuffers([iv, encryptedData]);
@@ -182,17 +182,17 @@ export default class WebCryptoDriver implements CryptoInterface {
 
   public async decrypt(
     encrypted: Uint8Array,
-    key: string | Uint8Array
+    key: string | Uint8Array,
   ): Promise<Uint8Array> {
     const initialKey = await this.driver.importKey(
       "raw",
       typeof key == "string" ? ArweaveUtils.stringToBuffer(key) : key,
       {
         name: "PBKDF2",
-        length: 32
+        length: 32,
       },
       false,
-      ["deriveKey"]
+      ["deriveKey"],
     );
 
     const salt = ArweaveUtils.stringToBuffer("salt");
@@ -202,15 +202,15 @@ export default class WebCryptoDriver implements CryptoInterface {
         name: "PBKDF2",
         salt: salt,
         iterations: 100000,
-        hash: "SHA-256"
+        hash: "SHA-256",
       },
       initialKey,
       {
         name: "AES-CBC",
-        length: 256
+        length: 256,
       },
       false,
-      ["encrypt", "decrypt"]
+      ["encrypt", "decrypt"],
     );
 
     const iv = encrypted.slice(0, 16);
@@ -218,10 +218,10 @@ export default class WebCryptoDriver implements CryptoInterface {
     const data = await this.driver.decrypt(
       {
         name: "AES-CBC",
-        iv: iv
+        iv: iv,
       },
       derivedkey,
-      encrypted.slice(16)
+      encrypted.slice(16),
     );
 
     // We're just using concat to convert from an array buffer to uint8array
