@@ -1,8 +1,8 @@
-import Axios from "https://deno.land/x/axiod/mod.ts";
+import Axios from "https://raw.githubusercontent.com/divy-work/axiod/master/mod.ts";
 import {
   IAxiodResponse as AxiosResponse,
   IRequest as AxiosRequestConfig,
-} from "https://deno.land/x/axiod/interfaces.ts";
+} from "https://raw.githubusercontent.com/divy-work/axiod/master/interfaces.ts";
 
 export interface ApiConfig {
   host?: string;
@@ -50,7 +50,7 @@ export default class Api {
     config?: AxiosRequestConfig,
   ): Promise<AxiosResponse> {
     try {
-      return await this.request().get(endpoint, config);
+      return await Axios.get(`${this.config.protocol}://${this.config.host}:${this.config.port}${endpoint}`, config);
     } catch (error) {
       if (error.response && error.response.status) {
         return error.response;
