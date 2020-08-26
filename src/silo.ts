@@ -26,7 +26,7 @@ export default class Silo {
 
     const ids = await this.transactions.search(
       "Silo-Name",
-      resource.getAccessKey()
+      resource.getAccessKey(),
     );
 
     if (ids.length == 0) {
@@ -61,7 +61,7 @@ export default class Silo {
 
     if (!parsed) {
       throw new Error(
-        `Invalid Silo name, must be a name in the format of [a-z0-9]+.[0-9]+, e.g. 'bubble.7'`
+        `Invalid Silo name, must be a name in the format of [a-z0-9]+.[0-9]+, e.g. 'bubble.7'`,
       );
     }
 
@@ -71,7 +71,7 @@ export default class Silo {
 
     const digest = await this.hash(
       ArweaveUtils.stringToBuffer(siloName),
-      hashIterations
+      hashIterations,
     );
 
     const accessKey = ArweaveUtils.bufferTob64(digest.slice(0, 15));
@@ -83,7 +83,7 @@ export default class Silo {
 
   private async hash(
     input: Uint8Array,
-    iterations: number
+    iterations: number,
   ): Promise<Uint8Array> {
     let digest = await this.crypto.hash(input);
 

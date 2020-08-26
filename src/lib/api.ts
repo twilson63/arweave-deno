@@ -1,5 +1,8 @@
-import Axios from "https://deno.land/x/axiod/mod.ts";
-import { IAxiodResponse as AxiosResponse, IRequest as AxiosRequestConfig } from "https://deno.land/x/axiod/interfaces.ts";
+import Axios from "https://raw.githubusercontent.com/divy-work/axiod/master/mod.ts";
+import {
+  IAxiodResponse as AxiosResponse,
+  IRequest as AxiosRequestConfig,
+} from "https://raw.githubusercontent.com/divy-work/axiod/master/interfaces.ts";
 
 export interface ApiConfig {
   host?: string;
@@ -38,16 +41,16 @@ export default class Api {
       port,
       timeout: config.timeout || 20000,
       logging: config.logging || false,
-      logger: config.logger || console.log
+      logger: config.logger || console.log,
     };
   }
 
   public async get(
     endpoint: string,
-    config?: AxiosRequestConfig
+    config?: AxiosRequestConfig,
   ): Promise<AxiosResponse> {
     try {
-      return await this.request().get(endpoint, config);
+      return await Axios.get(`${this.config.protocol}://${this.config.host}:${this.config.port}${endpoint}`, config);
     } catch (error) {
       if (error.response && error.response.status) {
         return error.response;
@@ -60,12 +63,14 @@ export default class Api {
   public async post(
     endpoint: string,
     body: Uint8Array | string | object,
-    config?: AxiosRequestConfig
+    config?: AxiosRequestConfig,
   ): Promise<AxiosResponse> {
     try {
-      return await Axios.post(`${this.config.protocol}://${this.config.host}:${
-        this.config.port
-      }${endpoint}`, body, config);
+      return await Axios.post(
+        `${this.config.protocol}://${this.config.host}:${this.config.port}${endpoint}`,
+        body,
+        config,
+      );
     } catch (error) {
       if (error.response && error.response.status) {
         return error.response;
@@ -81,12 +86,11 @@ export default class Api {
    */
   public request(): typeof Axios {
     let instance = Axios.create({
-      baseURL: `${this.config.protocol}://${this.config.host}:${
-        this.config.port
-      }`,
+      baseURL:
+        `${this.config.protocol}://${this.config.host}:${this.config.port}`,
       timeout: this.config.timeout,
     });
-    
+
     // if (this.config.logging) {
     //   instance.interceptors.request.use(request => {
     //     this.config.logger!(`Requesting: ${request.baseURL}/${request.url}`);

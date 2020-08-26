@@ -3,12 +3,12 @@ import deepHash from "./deepHash.ts";
 import { Chunk, Proof, generateTransactionChunks } from "./merkle.ts";
 
 class BaseObject {
-  [key: string]: any;
+  [key: string]: any
 
   public get(field: string): string;
   public get(
     field: string,
-    options: { decode: true; string: false }
+    options: { decode: true; string: false },
   ): Uint8Array;
   public get(field: string, options: { decode: true; string: true }): string;
 
@@ -17,11 +17,11 @@ class BaseObject {
     options?: {
       string?: boolean;
       decode?: boolean;
-    }
+    },
   ): string | Uint8Array | Tag[] {
     if (!Object.getOwnPropertyNames(this).includes(field)) {
       throw new Error(
-        `Field "${field}" is not a property of the Arweave Transaction class.`
+        `Field "${field}" is not a property of the Arweave Transaction class.`,
       );
     }
 
@@ -113,7 +113,7 @@ export default class Transaction extends BaseObject
       this.tags = attributes.tags.map(
         (tag: { name: string; value: string }) => {
           return new Tag(tag.name, tag.value);
-        }
+        },
       );
     }
   }
@@ -122,8 +122,8 @@ export default class Transaction extends BaseObject
     this.tags.push(
       new Tag(
         ArweaveUtils.stringToB64Url(name),
-        ArweaveUtils.stringToB64Url(value)
-      )
+        ArweaveUtils.stringToB64Url(value),
+      ),
     );
   }
 
@@ -141,7 +141,7 @@ export default class Transaction extends BaseObject
       data_root: this.data_root,
       data_tree: this.data_tree,
       reward: this.reward,
-      signature: this.signature
+      signature: this.signature,
     };
   }
 
@@ -166,7 +166,7 @@ export default class Transaction extends BaseObject
       this.chunks = {
         chunks: [],
         data_root: new Uint8Array(),
-        proofs: []
+        proofs: [],
       };
       this.data_root = "";
     }
@@ -187,8 +187,8 @@ export default class Transaction extends BaseObject
       data_path: ArweaveUtils.bufferTob64Url(proof.proof),
       offset: proof.offset.toString(),
       chunk: ArweaveUtils.bufferTob64Url(
-        data.slice(chunk.minByteRange, chunk.maxByteRange)
-      )
+        data.slice(chunk.minByteRange, chunk.maxByteRange),
+      ),
     };
   }
 
@@ -210,14 +210,14 @@ export default class Transaction extends BaseObject
           ArweaveUtils.stringToBuffer(this.quantity),
           ArweaveUtils.stringToBuffer(this.reward),
           this.get("last_tx", { decode: true, string: false }),
-          ArweaveUtils.stringToBuffer(tagString)
+          ArweaveUtils.stringToBuffer(tagString),
         ]);
       case 2:
         await this.prepareChunks(this.data);
 
-        const tagList: [Uint8Array, Uint8Array][] = this.tags.map(tag => [
+        const tagList: [Uint8Array, Uint8Array][] = this.tags.map((tag) => [
           tag.get("name", { decode: true, string: false }),
-          tag.get("value", { decode: true, string: false })
+          tag.get("value", { decode: true, string: false }),
         ]);
 
         return await deepHash([
@@ -229,7 +229,7 @@ export default class Transaction extends BaseObject
           this.get("last_tx", { decode: true, string: false }),
           tagList,
           ArweaveUtils.stringToBuffer(this.data_size),
-          this.get("data_root", { decode: true, string: false })
+          this.get("data_root", { decode: true, string: false }),
         ]);
       default:
         throw new Error(`Unexpected transaction format: ${this.format}`);

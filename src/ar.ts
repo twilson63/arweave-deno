@@ -23,7 +23,7 @@ export default class Ar {
 
   public winstonToAr(
     winstonString: string,
-    { formatted = false, decimals = 12, trim = true } = {}
+    { formatted = false, decimals = 12, trim = true } = {},
   ) {
     let number = this.stringToBigNum(winstonString, decimals).shiftedBy(-12);
 
@@ -56,7 +56,7 @@ export default class Ar {
 
   public isGreaterThan(
     winstonStringA: string,
-    winstonStringB: string
+    winstonStringB: string,
   ): boolean {
     let a = this.stringToBigNum(winstonStringA);
     let b = this.stringToBigNum(winstonStringB);
@@ -79,7 +79,7 @@ export default class Ar {
 
   private stringToBigNum(
     stringValue: string,
-    decimalPlaces: number = 12
+    decimalPlaces: number = 12,
   ) {
     return this.BigNum(stringValue, decimalPlaces);
   }
