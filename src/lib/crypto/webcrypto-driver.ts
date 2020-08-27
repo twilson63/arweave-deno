@@ -1,7 +1,6 @@
 import { JWKInterface, JWKPublicInterface } from "../wallet.ts";
 import CryptoInterface from "./crypto-interface.ts";
 import * as ArweaveUtils from "../utils.ts";
-// import { generateJWK, hash, encrypt, decrypt, sign, verify } from "https://raw.githubusercontent.com/divy-work/arweave-crypto-api/master/sdk/deno/mod.ts";
 import {
   generateJWK,
   hash,
@@ -9,7 +8,8 @@ import {
   decrypt,
   sign,
   verify,
-} from "../../../../arweave-crypto-api/sdk/deno/mod.ts";
+} from "https://raw.githubusercontent.com/divy-work/arweave-crypto-api/master/sdk/deno/mod.ts";
+
 export default class WebCryptoDriver implements CryptoInterface {
   public readonly keyLength = 4096;
   public readonly publicExponent = 0x10001;
