@@ -6,7 +6,7 @@ Arweave Deno is a fork of arweave-js and it is intended to be the TypeScript SDK
 
 ### Deno
 ```js
-import Arweave from "https://x.nest.land/arweave@0.0.1/src/index.ts";
+import Arweave from "https://x.nest.land/arweave@0.0.1/src/mod.ts";
 
 const arweave = Arweave.init({
     host: '127.0.0.1',
