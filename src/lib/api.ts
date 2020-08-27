@@ -50,7 +50,19 @@ export default class Api {
     config?: AxiosRequestConfig,
   ): Promise<AxiosResponse> {
     try {
-      return await Axios.get(`${this.config.protocol}://${this.config.host}:${this.config.port}${endpoint}`, config);
+      if (this.config.logging) {
+        this.config.logger!(
+          `Requesting: ${this.config.protocol}://${this.config.host}:${this.config.port}${
+            endpoint.startsWith("/") ? endpoint : "/" + endpoint
+          }`,
+        );
+      }
+      return await Axios.get(
+        `${this.config.protocol}://${this.config.host}:${this.config.port}${
+          endpoint.startsWith("/") ? endpoint : "/" + endpoint
+        }`,
+        config,
+      );
     } catch (error) {
       if (error.response && error.response.status) {
         return error.response;
@@ -66,8 +78,17 @@ export default class Api {
     config?: AxiosRequestConfig,
   ): Promise<AxiosResponse> {
     try {
+      if (this.config.logging) {
+        this.config.logger!(
+          `Requesting: ${this.config.protocol}://${this.config.host}:${this.config.port}${
+            endpoint.startsWith("/") ? endpoint : "/" + endpoint
+          }`,
+        );
+      }
       return await Axios.post(
-        `${this.config.protocol}://${this.config.host}:${this.config.port}${endpoint}`,
+        `${this.config.protocol}://${this.config.host}:${this.config.port}${
+          endpoint.startsWith("/") ? endpoint : "/" + endpoint
+        }`,
         body,
         config,
       );
@@ -90,20 +111,6 @@ export default class Api {
         `${this.config.protocol}://${this.config.host}:${this.config.port}`,
       timeout: this.config.timeout,
     });
-
-    // if (this.config.logging) {
-    //   instance.interceptors.request.use(request => {
-    //     this.config.logger!(`Requesting: ${request.baseURL}/${request.url}`);
-    //     return request;
-    //   });
-
-    //   instance.interceptors.response.use(response => {
-    //     this.config.logger!(
-    //       `Response:   ${response.config.url} - ${response.status}`
-    //     );
-    //     return response;
-    //   });
-    // }
 
     return instance;
   }

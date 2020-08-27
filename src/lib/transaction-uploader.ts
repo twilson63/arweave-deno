@@ -74,6 +74,8 @@ export class TransactionUploader {
     if (!transaction.chunks) {
       throw new Error(`Transaction chunks not prepared`);
     }
+    // Ensure that reward is a string
+    transaction.reward = String(transaction.reward);
     // Make a copy of transaction, zeroing the data so we can serialize.
     this.data = transaction.data;
     this.transaction = new Transaction(

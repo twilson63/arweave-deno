@@ -35,7 +35,7 @@ export function bufferToString(buffer: Uint8Array | ArrayBuffer): string {
 }
 
 export function stringToBuffer(string: string): Uint8Array {
-  return new TextEncoder().encode(string);
+  return new TextEncoder().encode(String(string));
 }
 
 export function stringToB64Url(string: string): string {
