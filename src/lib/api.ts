@@ -1,8 +1,8 @@
-import Axios from "https://raw.githubusercontent.com/divy-work/axiod/master/mod.ts";
+import Axios from "https://deno.land/x/axiod@0.26.1/mod.ts";
 import {
   IAxiodResponse as AxiosResponse,
   IRequest as AxiosRequestConfig,
-} from "https://raw.githubusercontent.com/divy-work/axiod/master/interfaces.ts";
+} from "https://deno.land/x/axiod@0.26.1/interfaces.ts";
 
 export interface ApiConfig {
   host?: string;
@@ -52,14 +52,12 @@ export default class Api {
     try {
       if (this.config.logging) {
         this.config.logger!(
-          `Requesting: ${this.config.protocol}://${this.config.host}:${this.config.port}${
-            endpoint.startsWith("/") ? endpoint : "/" + endpoint
+          `Requesting: ${this.config.protocol}://${this.config.host}:${this.config.port}${endpoint.startsWith("/") ? endpoint : "/" + endpoint
           }`,
         );
       }
       return await Axios.get(
-        `${this.config.protocol}://${this.config.host}:${this.config.port}${
-          endpoint.startsWith("/") ? endpoint : "/" + endpoint
+        `${this.config.protocol}://${this.config.host}:${this.config.port}${endpoint.startsWith("/") ? endpoint : "/" + endpoint
         }`,
         config,
       );
@@ -80,14 +78,12 @@ export default class Api {
     try {
       if (this.config.logging) {
         this.config.logger!(
-          `Requesting: ${this.config.protocol}://${this.config.host}:${this.config.port}${
-            endpoint.startsWith("/") ? endpoint : "/" + endpoint
+          `Requesting: ${this.config.protocol}://${this.config.host}:${this.config.port}${endpoint.startsWith("/") ? endpoint : "/" + endpoint
           }`,
         );
       }
       return await Axios.post(
-        `${this.config.protocol}://${this.config.host}:${this.config.port}${
-          endpoint.startsWith("/") ? endpoint : "/" + endpoint
+        `${this.config.protocol}://${this.config.host}:${this.config.port}${endpoint.startsWith("/") ? endpoint : "/" + endpoint
         }`,
         body,
         config,
